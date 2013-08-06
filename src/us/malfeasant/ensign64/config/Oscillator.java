@@ -7,7 +7,7 @@ package us.malfeasant.ensign64.config;
  * (is this much precision even worthwhile?)
  */
 public enum Oscillator {
-	NTSC(1.1/9), PAL(9e4/709379);
+	NTSC(11/9e7), PAL(9/7.09379e7);
 	
 	public final double pixelPeriod;
 	
