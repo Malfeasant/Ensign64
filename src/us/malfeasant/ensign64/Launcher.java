@@ -48,14 +48,14 @@ public class Launcher extends Application {
 		conf.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				int selected = machineView.getSelectionModel().getSelectedIndex();
+				Config selected = machineView.getSelectionModel().getSelectedItem();
 				System.out.println(selected + " => Settings");	// TODO
-//				if (selected.edit(machineView)) {
-					machineView.edit(selected);
+				if (selected.edit(machineView)) {
+//					machineView.edit(selected);
 //					machineView.getItems().remove(selected);
 //					machineView.getItems().add(selected);
 //					machineView.getSelectionModel().select(selected);
-//				}
+				}
 			}
 		});
 		Button run = new Button("Run");
