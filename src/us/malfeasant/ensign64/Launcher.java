@@ -1,63 +1,78 @@
 package us.malfeasant.ensign64;
 
+import us.malfeasant.ensign64.config.Config;
 import javafx.application.Application;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class Launcher extends Application {
 	// TODO- instead of String, would be nice to store the machines themselves?
-	private final ObservableList<String> machines = FXCollections.observableArrayList();
-	private final ObjectProperty<String> selected = new SimpleObjectProperty<>(this, "Selected");
+	private final ListView<Config> machineView = new ListView<>();
 	
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Ensign64");
-		BorderPane root = new BorderPane();
+		final BorderPane root = new BorderPane();
+		
+		machineView.setEditable(true);
+		machineView.setCellFactory(new Callback<ListView<Config>, ListCell<Config>>() {
+			@Override
+			public ListCell<Config> call(ListView<Config> arg0) {
+				return new Config.ConfigCell();
+			}
+		});
 		
 		Button newb = new Button("New");
 		newb.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				System.out.println("New");	// TODO
-				machines.add(String.valueOf(System.currentTimeMillis()));
+				Config newMachine = new Config();
+				if (newMachine.edit(root)) {
+					machineView.getItems().add(newMachine);
+					machineView.getSelectionModel().select(newMachine);
+				}
 			}
 		});
 		Button conf = new Button("Settings");
 		conf.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println(selected.get() + " => Settings" );	// TODO
+				int selected = machineView.getSelectionModel().getSelectedIndex();
+				System.out.println(selected + " => Settings");	// TODO
+//				if (selected.edit(machineView)) {
+					machineView.edit(selected);
+//					machineView.getItems().remove(selected);
+//					machineView.getItems().add(selected);
+//					machineView.getSelectionModel().select(selected);
+//				}
 			}
 		});
 		Button run = new Button("Run");
 		run.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println(selected.get() + " => Run");	// TODO
+				System.out.println(machineView.getSelectionModel().getSelectedItem()
+						+ " => Run");	// TODO
 			}
 		});
-		// have to move this here so delete button's handler has access to it- ugly, but not as bad
-		// as writing a list listener...  really, listview should handle it on its own, but
-		// currently, when the selected item is removed, the listview shows nothing selected, while
-		// the selectionmodel considers some element selected.
-		final ListView<String> machineView = new ListView<>(machines);
 		Button del = new Button("Delete");
 		del.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println(selected.get() + " => Deleted");	// TODO
-				machines.remove(selected.get());
+				System.out.println(machineView.getSelectionModel().getSelectedItem()
+						+ " => Deleted");	// TODO (also maybe add a nag)
+				machineView.getItems().remove(machineView.getSelectionModel().getSelectedItem());
 				machineView.getSelectionModel().clearSelection();
 			}
 		});
@@ -66,7 +81,7 @@ public class Launcher extends Application {
 		root.setTop(tb);
 		
 		SplitPane pane = new SplitPane();
-		selected.bind(machineView.getSelectionModel().selectedItemProperty());
+		ReadOnlyObjectProperty<Config> selected = machineView.getSelectionModel().selectedItemProperty();
 		// disable conf & run buttons if no item is selected
 		conf.disableProperty().bind(selected.isNull());
 		run.disableProperty().bind(selected.isNull());
