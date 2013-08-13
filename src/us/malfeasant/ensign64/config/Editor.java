@@ -1,5 +1,10 @@
 package us.malfeasant.ensign64.config;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import us.malfeasant.fxdialog.Dialog;
 import us.malfeasant.fxdialog.Dialog.MessageType;
 import us.malfeasant.fxdialog.Dialog.OptionType;
@@ -27,7 +32,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class Editor {
+public class Editor implements Externalizable {
 	public static class ConfigCell extends ListCell<Editor> {
 		@Override
 		protected void updateItem(Editor item, boolean empty) {
@@ -146,5 +151,19 @@ public class Editor {
 		pow = p;
 		vicRev = v;
 		return true;
+	}
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeUTF(name.get());
+		out.writeObject(osc);
+		out.writeObject(pow);
+		out.writeObject(vicRev);
+	}
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		name.set(in.readUTF());
+		osc = (Oscillator) in.readObject();
+		pow = (Powerline) in.readObject();
+		vicRev = (VicRev) in.readObject();
 	}
 }

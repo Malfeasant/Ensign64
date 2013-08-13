@@ -1,6 +1,14 @@
 package us.malfeasant.ensign64;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import us.malfeasant.ensign64.config.Editor;
+import us.malfeasant.fxdialog.Dialog;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.ActionEvent;
@@ -17,7 +25,39 @@ import javafx.util.Callback;
 
 public class Launcher extends Application {
 	private final ListView<Editor> machineView = new ListView<>();
+	private Path homePath;
 	
+	private void setPath() {
+		homePath = Paths.get(System.getProperty("user.home") + "/Ensign64");
+		System.out.println(homePath);
+		if (Files.exists(homePath)) {
+			if (Files.isDirectory(homePath)) {
+				readMachines();
+			}
+		} else {	// hasn't been created yet
+			try {
+				Files.createDirectory(homePath);
+			} catch (IOException e) {
+				homePath = null;
+				Dialog.showMessageDialog(machineView,
+						"Could not create directory- machines will not be saved.");
+			}
+		}
+	}
+	private void readMachines() {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(homePath, "*.ser")) {
+			for (Path file : stream) {
+				ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file));
+				try {
+					machineView.getItems().add((Editor) in.readObject());
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Ensign64");
@@ -83,8 +123,12 @@ public class Launcher extends Application {
 		
 		primaryStage.setScene(new Scene(root));
 		primaryStage.show();
+		setPath();
 	}
-
+	
+	private void write(Editor cfg) {
+		
+	}
 	public static void main(String[] args) {
 		launch(args);
 	}
