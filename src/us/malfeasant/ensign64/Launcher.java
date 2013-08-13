@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class Launcher extends Application {
-	// TODO- instead of String, would be nice to store the machines themselves?
 	private final ListView<Config> machineView = new ListView<>();
 	
 	@Override
@@ -36,7 +35,6 @@ public class Launcher extends Application {
 		newb.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println("New");	// TODO
 				Config newMachine = new Config();
 				if (newMachine.edit(root)) {
 					machineView.getItems().add(newMachine);
@@ -48,14 +46,7 @@ public class Launcher extends Application {
 		conf.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				Config selected = machineView.getSelectionModel().getSelectedItem();
-				System.out.println(selected + " => Settings");	// TODO
-				if (selected.edit(machineView)) {
-//					machineView.edit(selected);
-//					machineView.getItems().remove(selected);
-//					machineView.getItems().add(selected);
-//					machineView.getSelectionModel().select(selected);
-				}
+				machineView.getSelectionModel().getSelectedItem().edit(machineView);
 			}
 		});
 		Button run = new Button("Run");
@@ -82,9 +73,10 @@ public class Launcher extends Application {
 		
 		SplitPane pane = new SplitPane();
 		ReadOnlyObjectProperty<Config> selected = machineView.getSelectionModel().selectedItemProperty();
-		// disable conf & run buttons if no item is selected
+		// disable conf run & del buttons if no item is selected
 		conf.disableProperty().bind(selected.isNull());
 		run.disableProperty().bind(selected.isNull());
+		del.disableProperty().bind(selected.isNull());
 		pane.getItems().add(machineView);
 		
 		root.setCenter(pane);
