@@ -1,6 +1,6 @@
 package us.malfeasant.ensign64;
 
-import us.malfeasant.ensign64.config.Config;
+import us.malfeasant.ensign64.config.Editor;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.ActionEvent;
@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class Launcher extends Application {
-	private final ListView<Config> machineView = new ListView<>();
+	private final ListView<Editor> machineView = new ListView<>();
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -24,10 +24,10 @@ public class Launcher extends Application {
 		final BorderPane root = new BorderPane();
 		
 		machineView.setEditable(true);
-		machineView.setCellFactory(new Callback<ListView<Config>, ListCell<Config>>() {
+		machineView.setCellFactory(new Callback<ListView<Editor>, ListCell<Editor>>() {
 			@Override
-			public ListCell<Config> call(ListView<Config> arg0) {
-				return new Config.ConfigCell();
+			public ListCell<Editor> call(ListView<Editor> arg0) {
+				return new Editor.ConfigCell();
 			}
 		});
 		
@@ -35,7 +35,7 @@ public class Launcher extends Application {
 		newb.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				Config newMachine = new Config();
+				Editor newMachine = new Editor();
 				if (newMachine.edit(root)) {
 					machineView.getItems().add(newMachine);
 					machineView.getSelectionModel().select(newMachine);
@@ -72,7 +72,7 @@ public class Launcher extends Application {
 		root.setTop(tb);
 		
 		SplitPane pane = new SplitPane();
-		ReadOnlyObjectProperty<Config> selected = machineView.getSelectionModel().selectedItemProperty();
+		ReadOnlyObjectProperty<Editor> selected = machineView.getSelectionModel().selectedItemProperty();
 		// disable conf run & del buttons if no item is selected
 		conf.disableProperty().bind(selected.isNull());
 		run.disableProperty().bind(selected.isNull());
