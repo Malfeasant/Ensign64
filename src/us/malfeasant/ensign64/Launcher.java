@@ -2,6 +2,7 @@ package us.malfeasant.ensign64;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +10,7 @@ import java.nio.file.Paths;
 
 import us.malfeasant.ensign64.config.Editor;
 import us.malfeasant.fxdialog.Dialog;
+import us.malfeasant.fxdialog.Dialog.MessageType;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.event.ActionEvent;
@@ -29,10 +31,12 @@ public class Launcher extends Application {
 	
 	private void setPath() {
 		homePath = Paths.get(System.getProperty("user.home") + "/Ensign64");
-		System.out.println(homePath);
+//		System.out.println(homePath);
 		if (Files.exists(homePath)) {
 			if (Files.isDirectory(homePath)) {
 				readMachines();
+			} else {
+				// file exists with same name as the directory we're trying to make...
 			}
 		} else {	// hasn't been created yet
 			try {
@@ -40,7 +44,8 @@ public class Launcher extends Application {
 			} catch (IOException e) {
 				homePath = null;
 				Dialog.showMessageDialog(machineView,
-						"Could not create directory- machines will not be saved.");
+						"Could not create directory- machines will not be saved.",
+						"Problem", MessageType.ERROR);
 			}
 		}
 	}
@@ -79,6 +84,7 @@ public class Launcher extends Application {
 				if (newMachine.edit(root)) {
 					machineView.getItems().add(newMachine);
 					machineView.getSelectionModel().select(newMachine);
+					write(newMachine);
 				}
 			}
 		});
@@ -127,7 +133,15 @@ public class Launcher extends Application {
 	}
 	
 	private void write(Editor cfg) {
-		
+		if (homePath == null) return;
+		Path file = homePath.resolve(cfg.getName());
+		try {
+			ObjectOutputStream out =
+					new ObjectOutputStream(Files.newOutputStream(file));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public static void main(String[] args) {
 		launch(args);

@@ -56,11 +56,9 @@ public class Editor implements Externalizable {
 		vicRev = vr;
 	}
 	
-/*	public static Editor readFrom(File f) {
-		// TODO
-		return null;
-	}*/
-	
+	public String getName() {
+		return name.get();
+	}
 	public boolean edit(Node owner) {
 		final BooleanProperty valid = new SimpleBooleanProperty(false);
 		// after all that work on the dialog class, i'm going to roll a new one...
@@ -154,14 +152,14 @@ public class Editor implements Externalizable {
 	}
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeUTF(name.get());
+		//out.writeUTF(name.get());	// name will be tracked by filename
 		out.writeObject(osc);
 		out.writeObject(pow);
 		out.writeObject(vicRev);
 	}
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		name.set(in.readUTF());
+		//name.set(in.readUTF());
 		osc = (Oscillator) in.readObject();
 		pow = (Powerline) in.readObject();
 		vicRev = (VicRev) in.readObject();
