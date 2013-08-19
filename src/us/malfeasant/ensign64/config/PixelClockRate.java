@@ -6,12 +6,12 @@ package us.malfeasant.ensign64.config;
  * The numbers below are correct, though the representation is somewhat arbitrary.
  * (is this much precision even worthwhile?)
  */
-public enum PixelClockPeriod {
+public enum PixelClockRate {
 	NTSC(9/11e-7), PAL(7.09379/9e-7);
 	
 	public final double cyclesPerSecond;
 	
-	PixelClockPeriod(double cps) {
+	PixelClockRate(double cps) {
 		cyclesPerSecond = cps;
 	}
 }
