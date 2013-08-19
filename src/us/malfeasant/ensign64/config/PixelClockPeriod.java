@@ -6,12 +6,12 @@ package us.malfeasant.ensign64.config;
  * The numbers below are correct, though the representation is somewhat arbitrary.
  * (is this much precision even worthwhile?)
  */
-public enum Oscillator {
-	NTSC(11/9e7), PAL(9/7.09379e7);
+public enum PixelClockPeriod {
+	NTSC(9/11e-7), PAL(7.09379/9e-7);
 	
-	public final double pixelPeriod;
+	public final double cyclesPerSecond;
 	
-	Oscillator(double p) {
-		pixelPeriod = p;
+	PixelClockPeriod(double cps) {
+		cyclesPerSecond = cps;
 	}
 }
