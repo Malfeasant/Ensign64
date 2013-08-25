@@ -15,11 +15,12 @@ public class TestSerialize {
 	 */
 	public static void main(String[] args) {
 		System.out.println(path);
-		Machine mac = new Machine(PixelClockRate.PAL, PowerRate.EU);
+		Machine mac = new Machine();
+//		Machine mac = new Machine(PixelClockRate.PAL, PowerRate.EU);
 		System.out.println("Before: " + mac.toString());
 		try {
-//			mac.write(path);
-			mac = Machine.buildFrom(path);
+			mac.write(path);
+//			mac = Machine.buildFrom(path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
