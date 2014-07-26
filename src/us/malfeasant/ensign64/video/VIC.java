@@ -1,6 +1,7 @@
 package us.malfeasant.ensign64.video;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 
 import us.malfeasant.ensign64.ColorWrangler;
 
@@ -26,17 +27,24 @@ public class VIC {
 	}
 	
 	private final Revision rev;
-	private final BufferedImage image;
-	private final ColorWrangler palette;
+	private final WritableRaster raster;
 	
 	public VIC(Revision r) {
 		if (r == null) throw new NullPointerException();
 		rev = r;
-		palette = new ColorWrangler();
-		image = new BufferedImage(rev.cycles * 8, rev.lines, BufferedImage.TYPE_BYTE_BINARY, palette.makeModel());
+		// seems weird to create a buffered image then throw it away- but if i want an editable palette (and i do)
+		// it's easier to do it this way than to create all the internal bits that are required.
+		raster = new BufferedImage(rev.cycles * 8, rev.lines,
+				BufferedImage.TYPE_BYTE_BINARY, new ColorWrangler().makeModel()).getRaster();
+		// Test pattern
+		for (int y = 0; y < raster.getHeight(); y++) {
+			for (int x = 0; x < raster.getWidth(); x++) {
+				raster.setSample(x, y, 0, (x / 8 + y / 8) & 0xf);
+			}
+		}
 	}
 	
-	public BufferedImage getImage() {
-		return image;
+	public WritableRaster getRaster() {
+		return raster;
 	}
 }
