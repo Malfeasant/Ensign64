@@ -20,6 +20,7 @@ public class Viewer extends JComponent {
 	public Viewer(BufferedImage pixels) {
 		image = pixels;
 		addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				scaleX = getWidth() / (double) image.getWidth();
 				scaleY = getHeight() / (double) image.getHeight();
