@@ -1,7 +1,29 @@
 package us.malfeasant.ensign64;
 
 public enum DisplayUnit {
-	BLACK, WHITE, RED, CYAN, PURPLE, GREEN, BLUE, YELLOW,
-	ORANGE, BROWN, LRED, DGRAY, MGRAY, LGREEN, LBLUE, LGRAY,
+	BLACK(0), WHITE(0xff),
+	RED(0xbf, 0x1f, 0x27), CYAN(0x3f, 0xeb, 0xe0),
+	PURPLE(0xc3, 0x1e, 0xd8), GREEN(0x2b, 0xd5, 0x1c),
+	BLUE(0x25, 0x20, 0xff), YELLOW(0xfb, 0xff, 0x18),
+	ORANGE(0xc3, 0x44, 0x03), BROWN(0x74, 0x38, 0x00),
+	LRED(0xff, 0x54, 0x5d),	DGRAY(0x4a),
+	MGRAY(0x7b), LGREEN(0x76, 0xff, 0x64),
+	LBLUE(0x64, 0x5f, 0xff), LGRAY(0xb2),
 	HSYNC, VSYNC;
+	
+	public final int red;
+	public final int green;
+	public final int blue;
+	
+	DisplayUnit(int r, int g, int b) {
+		red = r;
+		green = g;
+		blue = b;
+	}
+	DisplayUnit(int l) {
+		this(l, l, l);
+	}
+	DisplayUnit() {
+		this(-1);
+	}
 }
