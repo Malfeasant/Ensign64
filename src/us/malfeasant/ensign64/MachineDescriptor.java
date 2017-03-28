@@ -1,16 +1,10 @@
 package us.malfeasant.ensign64;
 
+import us.malfeasant.ensign64.timing.Crystal;
+import us.malfeasant.ensign64.timing.Powerline;
+
 public class MachineDescriptor {
-	private String name;
-	
-	public MachineDescriptor(String name) {
-		this.name = name;
-	}
-	
-	@Override
-	public String toString() {
-		return name;
-	}
-	
+	private Crystal crystal;
+	private Powerline power;
 	// TODO more...
 }

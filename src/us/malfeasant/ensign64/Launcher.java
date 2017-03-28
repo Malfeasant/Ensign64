@@ -1,48 +1,37 @@
 package us.malfeasant.ensign64;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 public class Launcher {
 	
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> new Launcher());
+		SwingUtilities.invokeLater(() -> choose());
 	}
 	
-	private final DefaultListModel<MachineDescriptor> machineList;
-	//private final JList<MachineDescriptor> machineList;
-	
-	private Launcher() {
-		JFrame frame = new JFrame("Ensign 64");
-		
-		machineList = new DefaultListModel<>();
-		JList<MachineDescriptor> list = new JList<>(machineList);
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		frame.add(new JScrollPane(list));
-		
-		JMenuBar mb = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		JMenuItem fileNew = new JMenuItem("New");
-		fileNew.addActionListener((e) -> create());
-		
-		fileMenu.add(fileNew);
-		mb.add(fileMenu);
-		frame.setJMenuBar(mb);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
+	private static void choose() {
+		final String NTSC = "NTSC";
+		final String PAL = "PAL";
+		final String CUSTOM = "Custom";
+		String[] choices = { NTSC, PAL, CUSTOM };
+		String selection = (String) JOptionPane.showInputDialog(null, "Choose your machine.",
+				"Choose", JOptionPane.INFORMATION_MESSAGE, null, choices, choices[0]);
+		if (selection == null) {
+			System.out.println("Null, exiting.");
+			return;
+		}
+		switch (selection) {
+		case NTSC:
+			// TODO set clock, VIC to NTSC (later rev), power to 60Hz
+			break;
+		case PAL:
+			// TODO set clock, VIC to PAL, power to 50Hz
+			break;
+		case CUSTOM:
+			// TODO - a new dialog with more options- possible to mismatch chip vs clock, powerline freq applied vs expected...
+			break;
+		}
+		System.out.println(selection);
 	}
 	
-	private void create() {
-		String name = JOptionPane.showInputDialog("Enter a name:");
-		machineList.addElement(new MachineDescriptor(name));
-	}
 }
