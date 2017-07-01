@@ -12,4 +12,9 @@ public enum Powerline {
 	public int getHz() {
 		return frequency;
 	}
+	
+	@Override
+	public String toString() {
+		return getHz() + "Hz";
+	}
 }

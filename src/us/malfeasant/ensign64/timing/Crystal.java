@@ -11,5 +11,9 @@ public enum Crystal {
 		DENOM = d;
 	}
 	
+	@Override
+	public String toString() {
+		return ((double) NUMER) / DENOM + "MHz";
+	}
 	// TODO expose private fields in some useful way
 }
