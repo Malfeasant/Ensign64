@@ -1,11 +1,12 @@
 package ui;
 
+import config.VicFlavor;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
+import javafx.scene.image.WritableImage;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class Launch extends Application {
@@ -15,19 +16,18 @@ public class Launch extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Hello world!");
-		Button button = new Button();
-		button.setText("Say 'Hello world'");
-		button.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.println("Hello world.");
-			}
-		});
+		// TODO: Better way of specifying defaults- for now, hard code:
+		VicFlavor flavor = VicFlavor.NEWNTSC;
 		
-		StackPane pane = new StackPane();
-		pane.getChildren().add(button);
-		primaryStage.setScene(new Scene(pane, 300, 250));
+		primaryStage.setTitle("Ensign64");
+		
+		BorderPane pane = new BorderPane();
+		WritableImage screenImage = new WritableImage(flavor.cycles * 8, flavor.lines);
+		ImageView view = new ImageView(screenImage);
+		view.setViewport(new Rectangle2D(0, 0, flavor.cycles * 8, flavor.lines));	// TODO: crop image
+		pane.setCenter(view);
+		
+		primaryStage.setScene(new Scene(pane, 600, 450));
 		primaryStage.show();
 	}
 }
