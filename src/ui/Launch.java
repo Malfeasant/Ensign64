@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Optional;
+
 import config.Configuration;
 import javafx.application.Application;
 import javafx.beans.binding.BooleanBinding;
@@ -40,10 +42,7 @@ public class Launch extends Application {
 		ObservableList<MenuItem> menuList = fileMenu.getItems();
 		MenuItem item = new MenuItem("New...");
 		item.setOnAction(e -> {
-			Configuration conf = showConfig();
-			if (conf != null) {
-				cfgList.getItems().add(conf);
-			}
+			showConfig().ifPresent(consumer -> cfgList.getItems().add(consumer));
 		});
 		menuList.add(item);
 		item = new MenuItem("Settings...");	// TODO: connect listener
@@ -70,9 +69,9 @@ public class Launch extends Application {
 		primaryStage.show();
 	}
 	
-	private Configuration showConfig() {
+	private Optional<Configuration> showConfig() {
 		// TODO: show a dialog to configure a new machine, ensure it's valid, return it, or null if something went wrong
 		// for now:
-		return new Configuration();
+		return Optional.of(new Configuration());
 	}
 }
