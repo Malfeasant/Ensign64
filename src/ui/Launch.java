@@ -4,6 +4,8 @@ import config.VicFlavor;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -23,6 +25,12 @@ public class Launch extends Application {
 		primaryStage.setTitle("Ensign64");
 		
 		BorderPane pane = new BorderPane();
+		
+		Menu fileMenu = new Menu("File");
+		MenuBar menuBar = new MenuBar(fileMenu);
+		
+		pane.setTop(menuBar);
+		
 		WritableImage screenImage = new WritableImage(flavor.cycles * 8, flavor.lines);
 		PixelWriter pixWriter = screenImage.getPixelWriter();
 		ImageView view = new ImageView(screenImage);
