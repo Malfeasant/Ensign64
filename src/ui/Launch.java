@@ -13,6 +13,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -79,8 +80,17 @@ public class Launch extends Application {
 	 * @return the resulting Configuration, or an empty Optional if something went wrong or cancelled
 	 */
 	private Optional<Configuration> showConfig(Optional<Configuration> config) {
-		Configuration bareConfig = config.orElse(new Configuration());
-		// TODO: show a dialog to configure a new machine, ensure it's valid, return it, or null if something went wrong
+		Configuration bareConfig = config.orElse(Configuration.makeNew(""));
+		// TODO: show a (series of) dialog(s) to configure a new machine, ensure it's
+		// valid, return it, or null if something went wrong
+		TextInputDialog nameInput = new TextInputDialog(bareConfig.getName());
+		nameInput.showAndWait().ifPresent(text -> {
+			if (text == "") {
+				
+			} else {
+				bareConfig = bareConfig.modify(text);	// can't do this... how then?
+			}
+		});
 		// for now:
 		return Optional.of(bareConfig);
 	}
