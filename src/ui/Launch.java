@@ -42,20 +42,24 @@ public class Launch extends Application {
 		ObservableList<MenuItem> menuList = fileMenu.getItems();
 		MenuItem item = new MenuItem("New...");
 		item.setOnAction(e -> {
-			showConfig().ifPresent(consumer -> cfgList.getItems().add(consumer));
+			showConfig(Optional.empty()).ifPresent(consumer -> cfgList.getItems().add(consumer));
 		});
 		menuList.add(item);
 		item = new MenuItem("Settings...");	// TODO: connect listener
 		item.disableProperty().bind(isEmpty);
+		item.setOnAction(e -> {
+			showConfig(Optional.of(listSelected.get()));
+		});
 		menuList.add(item);
-		item = new MenuItem("Start");	// TODO: connect listener
+		item = new MenuItem("Start");	// TODO: connect listener- also, maybe this doesn't belong in File menu?
 		item.disableProperty().bind(isEmpty);
 		menuList.add(item);
-		item = new MenuItem("Discard");
+		item = new MenuItem("Delete");
+		item.disableProperty().bind(isEmpty);
 		item.setOnAction(e -> {
+			// TODO: nag dialog
 			cfgList.getItems().remove(listSelected.get());
 		});
-		item.disableProperty().bind(isEmpty);
 		menuList.add(item);
 		menuList.add(new SeparatorMenuItem());
 		item = new MenuItem("Exit");
@@ -69,9 +73,15 @@ public class Launch extends Application {
 		primaryStage.show();
 	}
 	
-	private Optional<Configuration> showConfig() {
+	/**
+	 * Show a config dialog
+	 * @param config an Optional containing either a Configuration to edit, or if not, create a new one
+	 * @return the resulting Configuration, or an empty Optional if something went wrong or cancelled
+	 */
+	private Optional<Configuration> showConfig(Optional<Configuration> config) {
+		Configuration bareConfig = config.orElse(new Configuration());
 		// TODO: show a dialog to configure a new machine, ensure it's valid, return it, or null if something went wrong
 		// for now:
-		return Optional.of(new Configuration());
+		return Optional.of(bareConfig);
 	}
 }
