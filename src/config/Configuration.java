@@ -7,35 +7,25 @@ package config;
  * @author Malfeasant
  */
 public class Configuration {
-	private final String name;
 	private final VicFlavor flavor;
-	// TODO: more stuff to modify
+	// TODO: more stuff such as oscillator & powerline frequencies, chip revisions...
 	
-	public String getName() {
-		return name;
-	}
 	public VicFlavor getFlavor() {
 		return flavor;
 	}
-	private Configuration(String name, VicFlavor flavor) {
+	private Configuration(VicFlavor flavor) {
 		// Ensure no nulls
-		if (name == null)
-			throw new NullPointerException("Name must not be null.");
-		this.name = name;
 		if (flavor == null)
 			throw new NullPointerException("VicFlavor must not be null.");
 		this.flavor = flavor;
 	}
 	
-	public static Configuration makeNew(String name) {
+	public static Configuration makeNew() {
 		// TODO: Better way of specifying defaults- for now, hard code:
-		return new Configuration(name, VicFlavor.NEWNTSC);
+		return new Configuration(VicFlavor.NEWNTSC);
 	}
 	
-	public Configuration modify(String name) {
-		return new Configuration(name, flavor);
-	}
 	public Configuration modify(VicFlavor flavor) {
-		return new Configuration(name, flavor);
+		return new Configuration(flavor);
 	}
 }
