@@ -20,7 +20,7 @@ public class Configuration {
 		this.flavor = flavor;
 	}
 	
-	public static Configuration makeNew() {
+	public static Configuration getDefault() {
 		// TODO: Better way of specifying defaults- for now, hard code:
 		return new Configuration(VicFlavor.NEWNTSC);
 	}

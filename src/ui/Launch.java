@@ -1,8 +1,9 @@
 package ui;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Optional;
 
-import config.Configuration;
 import javafx.application.Application;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -26,6 +27,9 @@ public class Launch extends Application {
 		launch(args);
 	}
 	
+	private final Map<String, ConfigWrapper> confMap = new IdentityHashMap<>();
+	private ListView<String> cfgListView;
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO: read command line, some means of persistence for saved machines
@@ -34,22 +38,22 @@ public class Launch extends Application {
 		
 		BorderPane pane = new BorderPane();
 		
-		ListView<Configuration> cfgList = new ListView<>();
-		pane.setLeft(cfgList);
-		ReadOnlyObjectProperty<Configuration> listSelected = cfgList.getSelectionModel().selectedItemProperty();
+		cfgListView = new ListView<>();
+		pane.setLeft(cfgListView);
+		ReadOnlyObjectProperty<String> listSelected = cfgListView.getSelectionModel().selectedItemProperty();
 		BooleanBinding isEmpty = listSelected.isNull();
 		
 		Menu fileMenu = new Menu("File");
 		ObservableList<MenuItem> menuList = fileMenu.getItems();
 		MenuItem item = new MenuItem("New...");
 		item.setOnAction(e -> {
-			showConfig(Optional.empty()).ifPresent(consumer -> cfgList.getItems().add(consumer));
+			showConfig("");
 		});
 		menuList.add(item);
-		item = new MenuItem("Settings...");	// TODO: connect listener
+		item = new MenuItem("Settings...");
 		item.disableProperty().bind(isEmpty);
 		item.setOnAction(e -> {
-			showConfig(Optional.of(listSelected.get()));
+			showConfig(listSelected.get());
 		});
 		menuList.add(item);
 		item = new MenuItem("Start");	// TODO: connect listener- also, maybe this doesn't belong in File menu?
@@ -59,7 +63,8 @@ public class Launch extends Application {
 		item.disableProperty().bind(isEmpty);
 		item.setOnAction(e -> {
 			// TODO: nag dialog
-			cfgList.getItems().remove(listSelected.get());
+			confMap.remove(listSelected.get());
+			cfgListView.getItems().remove(listSelected.get());
 		});
 		menuList.add(item);
 		menuList.add(new SeparatorMenuItem());
@@ -74,24 +79,28 @@ public class Launch extends Application {
 		primaryStage.show();
 	}
 	
-	/**
-	 * Show a config dialog
-	 * @param config an Optional containing either a Configuration to edit, or if not, create a new one
-	 * @return the resulting Configuration, or an empty Optional if something went wrong or cancelled
-	 */
-	private Optional<Configuration> showConfig(Optional<Configuration> config) {
-		Configuration bareConfig = config.orElse(Configuration.makeNew(""));
+	// Look up the config in the map- if it exists, use that as the start values of each dialog, otherwise
+	// pick sensible defaults
+	private void showConfig(String name) {
+		ConfigWrapper wrapper = confMap.getOrDefault(name, new ConfigWrapper());
+		// will never allow null or blank string so this should work
 		// TODO: show a (series of) dialog(s) to configure a new machine, ensure it's
 		// valid, return it, or null if something went wrong
-		TextInputDialog nameInput = new TextInputDialog(bareConfig.getName());
-		nameInput.showAndWait().ifPresent(text -> {
-			if (text == "") {
-				
-			} else {
-				bareConfig = bareConfig.modify(text);	// can't do this... how then?
+		TextInputDialog nameInput = new TextInputDialog(name);
+		Optional<String> newName = nameInput.showAndWait();
+		newName.ifPresent(text -> {
+			if (text.equals("")) return;	// Don't save a blank name no matter what
+			if (!text.equals(name)) {	// If name has changed
+				if (confMap.containsKey(text)) {	// name already used
+					return;	// TODO: allow retry or at least alert why it failed...
+				}
+				// Everything checks out, update the map and the listview
+				confMap.put(text, wrapper);
+				cfgListView.getItems().remove(wrapper.getName());
+				confMap.remove(wrapper.getName());	// does nothing if it's ""
+				cfgListView.getItems().add(text);
+				wrapper.setName(text);
 			}
 		});
-		// for now:
-		return Optional.of(bareConfig);
 	}
 }
