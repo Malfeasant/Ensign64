@@ -4,11 +4,13 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import config.VicFlavor;
 import javafx.application.Application;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -81,6 +83,7 @@ public class Launch extends Application {
 	
 	// Look up the config in the map- if it exists, use that as the start values of each dialog, otherwise
 	// pick sensible defaults
+	// TODO: this needs a lot of work. It's functional, but very ugly.
 	private void showConfig(String name) {
 		ConfigWrapper wrapper = confMap.getOrDefault(name, new ConfigWrapper());
 		// will never allow null or blank string so this should work
@@ -101,6 +104,14 @@ public class Launch extends Application {
 				cfgListView.getItems().add(text);
 				wrapper.setName(text);
 			}
+			// Todo: Test if the machine is running.  If it is, no more dialogs.
+			ChoiceDialog<VicFlavor> flavorInput = new ChoiceDialog<>(wrapper.getConfig().getFlavor(), VicFlavor.values());
+			Optional<VicFlavor> newFlavor = flavorInput.showAndWait();
+			newFlavor.ifPresent(flavor -> {
+				if (!flavor.equals(wrapper.getConfig().getFlavor())) {
+					wrapper.setConfig(wrapper.getConfig().modify(flavor));
+				}
+			});
 		});
 	}
 }

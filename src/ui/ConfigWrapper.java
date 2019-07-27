@@ -28,4 +28,7 @@ public class ConfigWrapper {
 	public Configuration getConfig() {
 		return config;
 	}
+	public void setConfig(Configuration config) {
+		this.config = config;
+	}
 }
