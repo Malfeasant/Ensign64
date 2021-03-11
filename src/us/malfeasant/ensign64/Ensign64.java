@@ -1,6 +1,7 @@
 package us.malfeasant.ensign64;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -27,24 +28,29 @@ public class Ensign64 extends Application {
 		loadItem.setOnAction(e -> {});	// TODO
 		MenuItem saveItem = new MenuItem("Save...");	// save some state- ram contents, config...
 		saveItem.setOnAction(e -> {});	// TODO
-		MenuItem resetItem = new MenuItem("Reset");
-		resetItem.setOnAction(e -> {});	// TODO
 		MenuItem exitItem = new MenuItem("Exit");
 		exitItem.setOnAction(e -> {
 			if (okQuit()) primaryStage.close();
 		});
-		Menu machineMenu = new Menu("Machine", null, loadItem, saveItem, resetItem, exitItem);
+		Menu fileMenu = new Menu("File", null, loadItem, saveItem, exitItem);
+		
+		MenuItem resetItem = new MenuItem("Reset");
+		resetItem.setOnAction(e -> {});	// TODO
 		
 		ToggleGroup group = new ToggleGroup();
 		RadioMenuItem stepItem = new RadioMenuItem("Step");
 		RadioMenuItem slowItem = new RadioMenuItem("Slow");	// how slow?  1/10th speed?  1/1000th would still be 1000 clocks per sec...
 		RadioMenuItem realItem = new RadioMenuItem("Real");	// as close to realtime as possible- depends on pal/ntsc
 		RadioMenuItem fastItem = new RadioMenuItem("Fast");	// unlimited
-		group.getToggles().addAll(stepItem, realItem, fastItem);
-		group.selectToggle(realItem);	// TODO: make the default configurable?
+		group.getToggles().addAll(stepItem, slowItem, realItem, fastItem);
+		group.selectedToggleProperty().addListener((obs, then, now) -> {});	// TODO
+		Platform.runLater(() -> group.selectToggle(realItem));	// TODO: make the default configurable?
+		// using runLater() so the event gets delivered after start() has completed
 		Menu speedMenu = new Menu("Speed", null, stepItem, slowItem, realItem, fastItem);
 		
-		MenuBar mbar = new MenuBar(machineMenu, speedMenu);
+		Menu machineMenu = new Menu("Machine", null, resetItem, speedMenu);
+		
+		MenuBar mbar = new MenuBar(fileMenu, machineMenu);
 		pane.setTop(mbar);
 		
 		primaryStage.setOnCloseRequest(e -> {
