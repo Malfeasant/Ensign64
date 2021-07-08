@@ -30,8 +30,22 @@ public class Ensign64 extends Application {
 		Tab custTab  = new Tab("Custom");
 		custTab.closableProperty().set(false);
 		
+		Worker worker = new Worker();
+		VBox testBox = new VBox();
+		for (Worker.Mode mode : Worker.Mode.values()) {
+			Button b = new Button(mode.name());
+			b.setOnAction((e) -> {
+				worker.setMode(mode);
+			});
+			testBox.getChildren().add(b);
+		}
+		Button killBut = new Button("Kill");
+		testBox.getChildren().add(killBut);
+		killBut.setOnAction((e) -> worker.shutdown());
+		Tab testTab = new Tab("Test", testBox);
+		
 		TabPane pane = new TabPane();
-		pane.getTabs().addAll(quickTab, custTab);
+		pane.getTabs().addAll(quickTab, custTab, testTab);
 		primaryStage.setScene(new Scene(pane));
 		primaryStage.show();
 	}
