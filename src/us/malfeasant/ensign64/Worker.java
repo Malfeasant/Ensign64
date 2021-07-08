@@ -7,12 +7,11 @@ import java.util.concurrent.TimeUnit;
 
 public class Worker {
 	private final ScheduledExecutorService exec;
-	private Mode mode = Mode.PAUSE;
+	private Mode mode = Mode.STEP;
 	private Object modeLock = new Object();
 	private ScheduledFuture<?> realTask;
 	
 	public enum Mode {
-		PAUSE,
 		STEP {
 			@Override
 			protected void start(Worker w) {
