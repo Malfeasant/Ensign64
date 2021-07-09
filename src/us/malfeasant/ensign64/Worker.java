@@ -5,18 +5,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import us.malfeasant.ensign64.config.Configuration;
+
 /**
  * Manages the thread (technically a pool, albeit a pool of one) that runs the simulation.
  * Allows setting of a speed- single step, realtime, or fast.  Realtime goal will be as
  * close to exact as practical- we'll run periodically, figuring out how many cycles to run
- * dynamically.
+ * dynamically.  Fast schedules a bunch of cycles without delay- being single threaded,
+ * a new batch begins only when the last batch completes.
  *
  * @author Malfeasant
  */
 public class Worker {
 	private final ScheduledExecutorService exec;
 	private Mode mode = Mode.STEP;
-	private ScheduledFuture<?> realTask;	// TODO: more specific type?
+	private ScheduledFuture<?> scheduled;	// TODO: more specific type?
+	private final Configuration config;
 	
 	public enum Mode {
 		STEP {
@@ -28,30 +32,26 @@ public class Worker {
 		REAL {
 			@Override
 			protected void start(Worker w) {
-				w.realTask = w.exec.scheduleAtFixedRate(() -> w.run(250), 0, 1000000000, TimeUnit.NANOSECONDS);	// TODO fire x cycles every y ms
-			}
-			@Override
-			protected void stop(Worker w) {
-				w.realTask.cancel(false);
+				w.scheduled = w.exec.scheduleAtFixedRate(() -> w.run(250), 0, 1000000000, TimeUnit.NANOSECONDS);	// TODO fire x cycles every y ms
 			}
 		},
 		FAST {
 			@Override
 			protected void start(Worker w) {
-				w.realTask = w.exec.scheduleAtFixedRate(() -> w.run(500), 0, 1, TimeUnit.NANOSECONDS);	// TODO fire x cycles
-			}
-			@Override
-			protected void stop(Worker w) {
-				w.realTask.cancel(false);
+				w.scheduled = w.exec.scheduleAtFixedRate(() -> w.run(500), 0, 1, TimeUnit.NANOSECONDS);	// TODO fire x cycles
 			}
 		};
 		
 		protected void start(Worker w) {}
-		protected void stop(Worker w) {}
+		private void stop(Worker w) {
+			w.scheduled.cancel(false);
+			w.scheduled = null;
+		}
 	}
 	
-	public Worker() {
+	public Worker(Configuration c) {
 		exec = Executors.newSingleThreadScheduledExecutor();
+		config = c;
 	}
 	
 	private void run(int cycles) {
