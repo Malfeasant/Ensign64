@@ -12,17 +12,19 @@ import us.malfeasant.ensign64.config.Configuration;
 import us.malfeasant.ensign64.simulation.Simulation;
 
 public class Ensign64 extends Application {
-	
+	private enum Globals {
+		SINGLETON;
+		private Stage mainStage;
+	}
 	public static void main(String[] args) {
 		launch(args);
 	}
-	private static Stage stage;	// there should be only one?
 	static Stage getStage() {
-		return stage;
+		return Globals.SINGLETON.mainStage;
 	}
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		stage = primaryStage;
+		Globals.SINGLETON.mainStage = primaryStage;
 		Button ntscBut = new Button("NTSC");
 		ntscBut.setOnAction((e) -> create(Configuration.getNTSC()));
 		Button palBut = new Button("PAL");
@@ -44,6 +46,6 @@ public class Ensign64 extends Application {
 	
 	private void create(Configuration c) {
 		Simulation sim = new Simulation(c);
-		stage.close();
+		Globals.SINGLETON.mainStage.close();
 	}
 }
