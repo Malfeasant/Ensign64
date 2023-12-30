@@ -218,3 +218,5 @@ pip-log.txt
 /nbproject/private/
 /build.xml
 /manifest.mf
+
+/target/
