@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClassName>us.malfeasant.ensign64.Ensign64</mainClassName>
+        <mainClassName>us.malfeasant.ensign64.Launch</mainClassName>
         <maven.compiler.release>21</maven.compiler.release>
         <javafx.version>21</javafx.version>
     </properties>
@@ -41,11 +41,6 @@
             <version>2.6.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>13</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

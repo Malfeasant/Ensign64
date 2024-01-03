@@ -220,3 +220,4 @@ pip-log.txt
 /manifest.mf
 
 /target/
+/.vscode
