@@ -221,3 +221,4 @@ pip-log.txt
 
 /target/
 /.vscode
+/dependency-reduced-pom.xml
